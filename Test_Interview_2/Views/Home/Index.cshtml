@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <div class="row">
+        <div class="col-4">
+            <input type="text" id="txtInput" />
+        </div>
+    </div>
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-4">
+            <button type="button" id="btnSegitiga">Generate Segitiga</button>
+        </div>
+        <div class="col-4">
+            <button type="button" id="btnGanjil">Generate Ganjil</button>
+        </div>
+        <div class="col-4">
+            <button type="button" id="btnPrima">Generate Prima</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4"><h3>Result</h3></div>
+        <div class="col-8" id="result-box"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    const textInput = document.getElementById("txtInput")
+    const btnSegitiga = document.getElementById("btnSegitiga")
+    const btnGanjil = document.getElementById("btnGanjil")
+    const btnPrima = document.getElementById("btnPrima")
+
+    window.onload = function () {
+        textInput.addEventListener("keyup", function (ev) {
+            ev.stopPropagation()
+            ev.preventDefault()
+            ev = (ev) ? ev : window.event
+
+            let charcode = (ev.which) ? ev.which : ev.keyCode
+
+            if (charcode > 31 && (charcode < 48 || charcode > 57))
+                return false
+
+            return true
+        })
+
+        btnSegitiga.addEventListener("click", function () {
+            if (!ValidateInput())
+                alert("Invalid Input!")
+            else {
+                $.post("Home/GenerateSegitiga", { input: textInput.value })
+                    .done(function (resp) {
+                        $("#result-box").empty()
+
+                        if (resp.status == 0)
+                            alert(`error: ${resp.message}`)
+                        else {
+                            for (let i = 0; i < resp.result.length; i++)
+                                $("#result-box").append("<div class='row col-12'>" + resp.result[i] + "</div>")
+                        }
+                    })
+            }
+        })
+
+        btnGanjil.addEventListener("click", function () {
+            if (!ValidateInput())
+                alert("Invalid Input!")
+            else {
+                $.post("Home/GenerateGanjil", { input: textInput.value })
+                    .done(function (resp) {
+                        $("#result-box").empty()
+
+                        if (resp.status == 0)
+                            alert(`error: ${resp.message}`)
+                        else
+                            $("#result-box").append(`<span>${resp.result}</span>`)
+
+                    })
+            }
+        })
+
+        btnPrima.addEventListener("click", function () {
+            if (!ValidateInput())
+                alert("Invalid Input!")
+            else {
+                $.post("Home/GeneratePrima", { input: textInput.value })
+                    .done(function (resp) {
+                        $("#result-box").empty()
+
+                        if (resp.status == 0)
+                            alert(`error: ${resp.message}`)
+                        else 
+                            $("#result-box").append(`<span>${resp.result}</span>`)
+                    })
+            }
+        })
+    }
+
+    function ValidateInput() {
+
+        if (textInput.value == "" || textInput.value == undefined || textInput.value == null)
+            return false
+
+        return true
+    }
+</script>
